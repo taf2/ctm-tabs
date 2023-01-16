@@ -7,8 +7,7 @@
   <div id="tab-details">Loading...</div>
   <script>
     addEventListener('DOMContentLoaded', (event) => {
-      const params = new URLSearchParams(window.location.search);
-      window.tabs = new Tabs("tabs-demo", {canLeader: !params.get("notLeader")});
+      window.tabs = new Tabs("tabs-demo");
 
       window.tabs.on("update", (dirty, tabs) => {
         const outputTabs = [];

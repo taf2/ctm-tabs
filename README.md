@@ -39,3 +39,6 @@ see: tabs-leader.html
   });
 </script>
 ```
+
+# Development/Testing
+Chrome allows broadcast channel via file:// but Safari does not.  To test with Safari you can run ```sh serv.sh``` if you have python3 installed it'll open a websever on port 8912.
