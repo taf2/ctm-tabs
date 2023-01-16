@@ -1,0 +1,38 @@
+<html>
+<head>
+  <script src="tabs.js"></script>
+  <script src="tab-leader-follower.js"></script>
+</head>
+<body>
+  <h1>Election/Leader/Follower</h1>
+  <p>Given a set of tabs open one with the canLeader flag is elected the leader.  All other tabs are designated a follower.</p>
+  <h3>Tabs Open</h3>
+  <p>Open any of these pages to see it in action.</p>
+  <div id="tab-details">Loading...</div>
+  <script>
+    addEventListener('DOMContentLoaded', (event) => {
+      const tabs = new Tabs("tabs-demo");
+
+      tabs.on("update", (dirty, tabs) => {
+        const outputTabs = [];
+        for (const tab of tabs.entries()) {
+          let row = '<tr>';
+          if (tab[1].leader) {
+            row += `<td><b>${tab[0]}</b></td>`;
+          } else {
+            row += `<td>${tab[0]}</td>`;
+          }
+          row += `<td>${JSON.stringify(tab[1])}</td></tr>`;
+          outputTabs.push(row);
+        }
+        document.getElementById("tab-details").innerHTML = `<p>Open Tabs: ${tabs.size}</p>
+                  <table><tr><th>ID</th><th>Attributes</th></tr>${outputTabs.join('')}</table>`;
+      });
+
+      window.page = new TabLeaderFollower(tabs)
+      window.page.join();
+
+    });
+  </script>
+</body>
+</html>
