@@ -23,32 +23,25 @@ class Tabs {
 
     this.tabs.set(this.id, attributes);
     this.pingTimer = null;
-    this.needInit = true;
-    this.receivedPong = false;
+    this.bc.onmessage = (event) => { this.onUpdate(event); }
   }
 
   start() {
-    this.bc.onmessage = (event) => { this.onUpdate(event); }
-    this.update();
     this.ping();
   }
 
   // ping requests each tab to pong with their current details
   ping() {
-    if (!this.needInit) { this.update(); } // handles the case of becoming the last tab standing
+    this.update();
+
     this.oldTabs = this.tabs;
     this.tabs  = new Map();
     this.dirty = new Set();
     this.tabs.set(this.id, Object.assign({me: true}, this.attributes));
-    this.receivedPong = false;
     this.bc.postMessage({action: "ping", id: this.id});
-    if (this.needInit) { // so first load if only this tab we fire the update event
-      this.dirty.add(this.id);
-      this.needInit = false;
-      this.update();
-    }
+
     this.stop();
-    this.pingTimer = setTimeout(this.ping.bind(this), 100);
+    this.pingTimer = setTimeout(this.ping.bind(this), 100); // all open tabs have 100ms to respond
   }
 
   stop() {
@@ -62,7 +55,6 @@ class Tabs {
       this.bc.postMessage({action: "pong", id: this.id, attributes: this.attributes});
       break;
     case 'pong':
-      this.receivedPong = true;
       const oldTabAttrs = JSON.stringify(this.oldTabs.get(event.data.id));
       const newTabAttrs = JSON.stringify(event.data.attributes);
 
@@ -73,8 +65,6 @@ class Tabs {
       this.tabs.set(event.data.id, event.data.attributes);
       break;
     }
-
-    //this.update();
   }
 
   update() {
