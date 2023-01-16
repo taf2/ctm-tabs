@@ -15,7 +15,7 @@
         for (const tab of tabs.entries()) {
           outputTabs.push(`<tr><td>${tab[0]}</td><td>${JSON.stringify(tab[1])}</td></tr>`);
         }
-        document.getElementById("tab-details").innerHTML = `<p>Open Tabs: ${this.tabs.size}</p>
+        document.getElementById("tab-details").innerHTML = `<p>Open Tabs: ${tabs.size}</p>
                   <table><tr><th>ID</th><th>Attributes</th></tr>${outputTabs.join('')}</table>`;
       });
 
