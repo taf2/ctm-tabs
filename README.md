@@ -10,7 +10,10 @@ tabs by id and mark a specific tab if it supports specific features such as voic
 ```
   addEventListener('DOMContentLoaded', (event) => {
     const params = new URLSearchParams(window.location.search);
-    window.tabs = new Tabs("tabs-demo", "#tabs", {canLeader: !params.get("notLeader")});
-    window.tabs.start();
+    const tabs = new Tabs("tabs-demo", "#tabs", {canLeader: !params.get("notLeader")});
+    tabs.on('update', (dirty, tabs) => {
+      console.log("a tab was added removed or updated");
+    });
+    tabs.start();
   });
 ```
