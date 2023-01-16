@@ -11,9 +11,9 @@
   <div id="tab-details">Loading...</div>
   <script>
     addEventListener('DOMContentLoaded', (event) => {
-      const tabs = new Tabs("tabs-demo");
+      window.tabs = new TabLeaderFollower("tabs-demo")
 
-      tabs.on("update", (dirty, tabs) => {
+      window.tabs.on("update", (dirty, tabs) => {
         const outputTabs = [];
         for (const tab of tabs.entries()) {
           let row = '<tr>';
@@ -29,8 +29,7 @@
                   <table><tr><th>ID</th><th>Attributes</th></tr>${outputTabs.join('')}</table>`;
       });
 
-      window.page = new TabLeaderFollower(tabs)
-      window.page.join();
+      window.tabs.start();
 
     });
   </script>

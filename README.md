@@ -7,13 +7,28 @@ tabs by id and mark a specific tab if it supports specific features such as voic
 
 # Usage
 
-```
+Simple tracking of tabs and their associated attributes
+```html
+<script src="tabs.js"></script>
+<script>
   addEventListener('DOMContentLoaded', (event) => {
-    const params = new URLSearchParams(window.location.search);
-    const tabs = new Tabs("tabs-demo", "#tabs", {canLeader: !params.get("notLeader")});
+    const tabs = new Tabs("tabs-demo");
     tabs.on('update', (dirty, tabs) => {
       console.log("a tab was added removed or updated");
     });
     tabs.start();
   });
+</script>
+```
+
+Leader/Follower, elect a single leader relying on web locks API to ensure atomic selection process.
+```html
+<script src="tabs.js"></script>
+<script src="tab-leader-follower.js"></script>
+<script>
+  addEventListener('DOMContentLoaded', (event) => {
+    window.page = new TabLeaderFollower(new Tabs("tabs-demo"))
+    window.page.join();
+  });
+</script>
 ```
