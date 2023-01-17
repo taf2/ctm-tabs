@@ -18,6 +18,11 @@
                   <table><tr><th>ID</th><th>Attributes</th></tr>${outputTabs.join('')}</table>`;
       });
 
+      // we can track state in the tab by setting attributes on the active tab and these will replicate to other tabs
+      document.addEventListener('visibilitychange', () => {
+        window.tabs.attributes.visibilityState = document.visibilityState;
+      });
+
       window.tabs.start();
     });
   </script>
