@@ -3,6 +3,7 @@ class TabLeaderFollower extends Tabs {
     super(channel, attributes);
     this.attributes.leader = false;
     this.attributes.follower = true;
+    this.electionTimer = null;
   }
 
   start() {
@@ -33,7 +34,6 @@ class TabLeaderFollower extends Tabs {
   }
 
   elect() {
-    console.log("elected!", this.id);
     this.attributes.leader = true;
     sessionStorage['tab.leader'] = this.id;
     this.update(true);
@@ -49,16 +49,15 @@ class TabLeaderFollower extends Tabs {
           const election = crypto.randomUUID();
           if (!lock) { console.warn("another tab doing election", election); return; }
           const promise = new Promise( (resolve, reject) => {
-            console.log("start election", election);
             let hasLeader = false;
             for (const entry of this.tabs.entries()) {
               const id = entry[0];
               const tab = entry[1];
-              if (tab.leader) { hasLeader = id; console.log("found leader:", tab); break; }
+              if (tab.leader) { hasLeader = id; break; }
             }
-            if (hasLeader) { console.log("skip already have a leader", hasLeader); this.postElected(hasLeader); return; }
-            setTimeout( async () => {
-              console.log("do election?", this.tabs);
+            if (hasLeader) { this.postElected(hasLeader); return; }
+            if (this.electionTimer) { clearTimeout(this.electionTimer); }
+            this.electionTimer = setTimeout( async () => {
               const priorityTabs = [];
               for (const entry of this.tabs.entries()) {
                 const id = entry[0];
@@ -72,12 +71,12 @@ class TabLeaderFollower extends Tabs {
               for (const entry of priorityTabs) {
                 const id = entry[0];
                 const tab = entry[1];
-                console.log("can tab be elected?", tab);
                 if (tab.follower) {
                   this.postElected(id);
                   break;
                 }
               }
+              this.electionTimer = null;
               resolve();
             }, 200);
           });
@@ -86,13 +85,11 @@ class TabLeaderFollower extends Tabs {
       } catch (e) {
         console.error(e);
       } finally {
-        console.log("done")
         this.electing = false;
       }
     }
   }
   async postElected(id) {
-    console.log("elect tab:", id);
     await navigator.locks.request("tabs.elect", {ifAvailable: true}, async (l) => {
       if (!l) { console.warn("lock not available"); return; }
       if (id == this.id) {
