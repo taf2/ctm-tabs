@@ -114,11 +114,13 @@ class TabLeaderFollower extends Tabs {
   }
 
   messageHandler(event) {
-    if (event.data.action == 'elect' && event.data.id == this.id) {
-      this.elect(); // elect self
-    } else {
-      this.attributes.leader = false;
-      sessionStorage['tab.leader'] = event.data.id;
+    if (event.data.action == 'elect') {
+      if (event.data.id == this.id) {
+        this.elect(); // elect self
+      } else {
+        this.attributes.leader = false;
+        sessionStorage['tab.leader'] = event.data.id;
+      }
     }
   }
 
